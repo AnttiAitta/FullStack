@@ -6,6 +6,20 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
+const Statistics = ({ good, neutral, bad, total, average, positivePercent }) => {
+  return (
+    <div>
+      <h1>statistics</h1>
+      <div>good {good}</div>
+      <div>neutral {neutral}</div>
+      <div>bad {bad}</div>
+      <div>all {total}</div>
+      <div>average {average}</div>
+      <div>positive {positivePercent}</div>
+    </div>
+  )
+}
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
@@ -37,13 +51,7 @@ const App = () => {
       <Button handleClick={increaseByOne} text='good' />
       <Button handleClick={stayStill} text='neutral' />
       <Button handleClick={decreaseByOne} text='bad' />
-      <h1>statics</h1>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {total}</div>
-      <div>average {average}</div>
-      <div>positive {positivePercent} %</div>
+      <Statistics good={good} neutral={neutral} bad={bad} total={total} average={average} positivePercent={positivePercent} />
     </div>
   )
 }
