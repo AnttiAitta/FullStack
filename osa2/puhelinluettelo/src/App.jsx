@@ -26,12 +26,15 @@ const PersonForm = ({ newName, newNumber, handleNameChange, handleNumberChange, 
   )
 }
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons, handleDelete }) => {
   return(
     <div>
       <ul>
         {filteredPersons.map((person, index) => (
-          <li key={index}>{person.name} {person.number}</li>
+          <li key={index}>
+            {person.name} {person.number}
+            <button onClick={() => handleDelete(person.id, person.name)}>Delete</button>
+            </li>
         ))}
       </ul>
     </div>
@@ -88,6 +91,18 @@ const App = () => {
     setNewNumber('')
   }
 
+  const handleDelete = (id, name) => {
+    const isConfirmed = window.confirm(
+      `Delete ${name}?`
+      )
+    if (isConfirmed) {
+      axios.delete(`http://localhost:3001/persons/${id}`)
+      .then(response => {
+        setPersons(persons.filter(person => person.id !== id))
+    })
+  }
+}
+
   const filteredPersons = persons.filter(person => 
     person.name.toLocaleLowerCase().includes(filterText.toLocaleLowerCase())
   )
@@ -105,7 +120,7 @@ const App = () => {
       addPerson={addPerson}
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 
