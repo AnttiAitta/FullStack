@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/person'
+import Notification from './components/Notifications'
+import './index.css'
 
 const Filter = ({ filterText, handleFilterChange }) => {
   return (
@@ -46,6 +48,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterText, setFilterText] = useState('')
+  const [message, setMessage] = useState('')
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     personService
@@ -78,6 +82,13 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return
     }
+    else {
+      setMessage(`Added ${newName}`)
+      setShowNotification(true)
+      setTimeout(() => {
+        setShowNotification(false)
+      }, 5000)
+    }
 
     personService.create(personObject).then(response => {
       setPersons(persons.concat(response.data))
@@ -99,6 +110,11 @@ const App = () => {
       axios.delete(`http://localhost:3001/persons/${id}`)
       .then(response => {
         setPersons(persons.filter(person => person.id !== id))
+        setMessage(`Deleted successfully!`)
+        setShowNotification(true)
+        setTimeout(() => {
+          setShowNotification(false)
+        }, 5000)
     })
   }
 }
@@ -110,6 +126,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {showNotification && <Notification message={message} />}
       <Filter filterText={filterText} handleFilterChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm 
