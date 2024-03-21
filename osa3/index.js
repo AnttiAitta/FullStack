@@ -1,6 +1,6 @@
 const http = require('http');
 
-let notes = [
+let persons = [
     {
         id: 1,
         name: "Arto Hellas",
@@ -24,18 +24,30 @@ let notes = [
 ]
 
 const app = http.createServer((request, response) => {
-    if (request.url === '/info' && request.method === 'GET') {
-        const contactCount = notes.length;
-
+    const url = new URL(request.url, `http://${request.headers.host}`);
+    
+    if (url.pathname === '/info' && request.method === 'GET') {
+        const contactCount = persons.length;
         const currentTime = new Date().toLocaleString()
-
         const infoResponse = `Phonebook has info for ${contactCount} people\n${currentTime}`;
-
         response.writeHead(200, { 'Content-Type': 'text/plain' });
         response.end(infoResponse);
-    } else {
+    } else if (url.pathname === '/api/persons' && request.method === 'GET') {
         response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(notes));
+        response.end(JSON.stringify(persons));
+    } else if (url.pathname.startsWith('/api/persons/') && request.method === 'GET') {
+        const id = parseInt(url.pathname.substring(13));
+        const contact = persons.find(person => person.id === id);
+        if (contact) {
+            response.writeHead(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(contact));
+        } else {
+            response.writeHead(404, { 'Content-Type': 'text/plain' });
+            response.end('Contact not found');
+        }
+    } else {
+        response.writeHead(404, { 'Content-Type': 'text/plain' });
+        response.end('Not Found');
     }
 });
 
